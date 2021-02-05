@@ -1,40 +1,45 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Router from 'next/router'
+import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+
+import { useContext, useEffect } from 'react'
+import NavBar from '../components/NavBar'
+import { AuthContext } from '../context/AuthContextProvider'
+// import Loader from 'react-spinners/ScaleLoader'
+import Loader from 'react-loader-spinner'
 import Link from 'next/link'
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Netlify</title>
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
+const Index = () => {
+  const { loggedInUser } = useContext(AuthContext)
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href='https://nextjs.org'>Next.js!</a>
-        </h1>
+  useEffect(() => {
+    if (!loggedInUser) {
+      Router.push('/')
+    }
+  }, [loggedInUser])
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <Link href='/new-page/'>New Page &rarr;</Link>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Powered by{' '}
-          <img src='/vercel.svg' alt='Vercel Logo' className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+  return !loggedInUser ? (
+    <Flex align={'center'} justify={'center'} p={20}>
+      <Link href='/new-page'>New Page &rarr;</Link>
+      <Loader
+        type='ThreeDots'
+        color='#0366d6'
+        height={50}
+        width={50}
+        timeout={10000}
+      />
+    </Flex>
+  ) : (
+    <>
+      {/* <NavBar /> */}
+      <Flex align={'center'} justify={'center'} p={20} flexDirection={'column'}>
+        <Heading>Hello </Heading>
+        <Text fontSize='3xl'>Home page</Text>
+        <Box>
+          <p> Username : {loggedInUser?.username}</p>
+        </Box>
+      </Flex>
+    </>
   )
 }
+
+export default Index
